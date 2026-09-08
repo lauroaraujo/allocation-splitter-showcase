@@ -1,4 +1,4 @@
-import { useEffect, useId, useRef, useState } from 'react';
+import { useEffect, useId, useMemo, useRef, useState } from 'react';
 import { PERCENT_SCALE, fromBasisPoints } from '../../common/basisPoints';
 import { PALETTE } from '../../common/colorPalette';
 import { formatCurrency } from '../../common/currency';
@@ -52,11 +52,19 @@ export const AllocationSplitter = <K extends string = 'proportional' | 'freeform
   showStrategySelector = true,
   showBar = true,
 }: AllocationSplitterProps<K>) => {
-  const rows: AllocationRow[] = categories.map(({ name, percentage, isLocked }) => ({
-    name,
-    percentage,
-    isLocked: !!isLocked,
-  }));
+  // Memoized so its reference only changes when `categories` itself does —
+  // otherwise the announcement effect below (which depends on `rows`)
+  // would re-run on every render, since `.map()` would hand it a new array
+  // each time regardless of whether anything actually changed.
+  const rows: AllocationRow[] = useMemo(
+    () =>
+      categories.map(({ name, percentage, isLocked }) => ({
+        name,
+        percentage,
+        isLocked: !!isLocked,
+      })),
+    [categories]
+  );
   const [announcement, setAnnouncement] = useState('');
 
   const isFirstRenderRef = useRef(true);
@@ -72,8 +80,7 @@ export const AllocationSplitter = <K extends string = 'proportional' | 'freeform
       setAnnouncement(buildAnnouncement(rows));
     }, 600);
     return () => clearTimeout(announceTimeoutRef.current);
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [categories]);
+  }, [rows]);
 
   const uid = useId();
   const totalValueId = `${uid}-total`;
