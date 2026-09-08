@@ -1,0 +1,48 @@
+.currencyInput {
+  width: 100%;
+  box-sizing: border-box;
+  display: inline-flex;
+  align-items: baseline;
+  gap: 2px;
+  padding: 12px 20px;
+  border-radius: var(--radius-md);
+  background-color: var(--color-surface);
+  font-family: var(--font-base);
+}
+
+.currencyInputSign {
+  font-size: var(--font-size-sm);
+  color: var(--color-muted);
+}
+
+.currencyInputField {
+  width: 100%;
+  min-width: 5ch;
+  border: none;
+  background: transparent;
+  padding: 0;
+  font-family: inherit;
+  font-size: 20px;
+  font-weight: var(--font-weight-bold);
+  color: var(--color-ink);
+  font-variant-numeric: tabular-nums;
+  text-align: right;
+}
+
+.currencyInputField:focus {
+  outline: none;
+}
+
+.currencyInputField:disabled {
+  color: var(--color-disabled);
+  opacity: 1;
+  -webkit-text-fill-color: var(--color-disabled);
+  cursor: default;
+}
+
+.currencyInputField::-webkit-outer-spin-button,
+.currencyInputField::-webkit-inner-spin-button {
+  appearance: none;
+  -webkit-appearance: none;
+  margin: 0;
+}

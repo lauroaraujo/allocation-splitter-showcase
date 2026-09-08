@@ -1,0 +1,19 @@
+.lockToggle {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 20px;
+  height: 20px;
+  border-radius: 50%;
+  border: 1.5px solid #c9c9c9;
+  background-color: transparent;
+  color: var(--color-muted);
+  padding: 0;
+  cursor: pointer;
+}
+
+.lockToggle[data-locked] {
+  background-color: var(--color-ink);
+  border-color: var(--color-ink);
+  color: #fff;
+}

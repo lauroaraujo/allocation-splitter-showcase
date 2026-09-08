@@ -1,0 +1,54 @@
+.allocationBar {
+  display: flex;
+  box-sizing: border-box;
+  height: 40px;
+  border-radius: var(--radius-md);
+  border: 2px solid transparent;
+  overflow: hidden;
+  background-color: var(--color-surface);
+}
+
+.allocationBar.isInvalid {
+  border-color: var(--color-danger);
+}
+
+.allocationBarSegment {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  min-width: 0;
+  flex-shrink: 1;
+  font-family: var(--font-base);
+  font-size: 12px;
+  font-weight: var(--font-weight-semibold);
+  letter-spacing: 0.01em;
+  white-space: nowrap;
+  overflow: hidden;
+}
+
+.allocationBarGap {
+  flex-shrink: 1;
+  background-image: repeating-linear-gradient(
+    45deg,
+    #f8e9e7,
+    #f8e9e7 5px,
+    transparent 5px,
+    transparent 10px
+  );
+}
+
+.allocationBarExcess {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  min-width: 28px;
+  background-color: var(--color-danger);
+  font-family: var(--font-base);
+  font-size: 12px;
+  font-weight: var(--font-weight-semibold);
+  letter-spacing: 0.01em;
+  color: #fff;
+  white-space: nowrap;
+  overflow: hidden;
+}

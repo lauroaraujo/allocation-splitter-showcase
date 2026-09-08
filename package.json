@@ -22,7 +22,10 @@
     "build": "tsc -b && vite build",
     "lint": "oxlint",
     "storybook": "storybook dev -p 6006",
-    "build-storybook": "storybook build"
+    "build-storybook": "storybook build",
+    "type-check": "tsc -b --noEmit",
+    "test:a11y": "vitest run --project=storybook",
+    "validate": "npm run lint && npm run type-check && npm run test:a11y"
   },
   "peerDependencies": {
     "react": "^19.0.0",

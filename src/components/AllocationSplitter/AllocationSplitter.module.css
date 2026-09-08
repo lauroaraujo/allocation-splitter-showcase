@@ -1,0 +1,292 @@
+.allocationSplitterRoot {
+  width: 100%;
+}
+
+.allocationSplitterBarWrapper {
+  margin-bottom: 16px;
+}
+
+.allocationSplitterControlsRow {
+  display: flex;
+  align-items: flex-end;
+  gap: 24px;
+  margin-bottom: 16px;
+  font-family: var(--font-base);
+}
+
+.allocationSplitterAmountField {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  flex: 1 1 0;
+  min-width: 200px;
+}
+
+.allocationSplitterModeField {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  flex: 0 0 auto;
+}
+
+.allocationSplitterValueLabel,
+.allocationSplitterModeLabel {
+  font-size: var(--font-size-sm);
+  color: var(--color-muted);
+}
+
+.allocationSplitterModeSelect {
+  min-width: 160px;
+  box-sizing: border-box;
+  padding: 12px 20px;
+  border: none;
+  border-radius: var(--radius-md);
+  background-color: var(--color-surface);
+  font-family: inherit;
+  font-size: 16px;
+  font-weight: var(--font-weight-semibold);
+  color: var(--color-ink);
+  cursor: pointer;
+}
+
+.allocationSplitterModeSelect:focus {
+  outline: 2px solid var(--color-ink);
+  outline-offset: 2px;
+}
+
+.allocationSplitterScroll {
+  width: 100%;
+  overflow-x: auto;
+}
+
+.allocationSplitterTable {
+  width: 100%;
+  min-width: 280px;
+  border-collapse: collapse;
+  font-family: var(--font-base);
+}
+
+.allocationSplitterRow td {
+  padding: 20px 4px;
+  border-bottom: 1px solid var(--color-border);
+  vertical-align: middle;
+}
+
+.allocationSplitterRow:last-child td {
+  border-bottom: none;
+}
+
+.allocationSplitterSwatch {
+  display: block;
+  width: 12px;
+  height: 12px;
+  border-radius: 2px;
+  flex-shrink: 0;
+}
+
+.allocationSplitterLabelCell {
+  width: 100%;
+  padding-left: 16px;
+}
+
+.allocationSplitterName {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 20px;
+  font-weight: var(--font-weight-semibold);
+  color: var(--color-ink);
+}
+
+.allocationSplitterDescription {
+  font-size: var(--font-size-sm);
+  color: var(--color-muted);
+  margin-top: 2px;
+}
+
+.allocationSplitterPercentageCell {
+  padding-left: 16px;
+  white-space: nowrap;
+}
+
+.allocationSplitterAmountCell {
+  padding-left: 16px;
+  min-width: 80px;
+  text-align: right;
+  white-space: nowrap;
+  font-family: var(--font-mono);
+  font-size: 16px;
+  color: #4a4a4a;
+}
+
+.allocationSplitterLockCell {
+  padding-left: 16px;
+  text-align: right;
+  white-space: nowrap;
+}
+
+.allocationSplitterTotalRow td {
+  padding: 16px 4px;
+  border-bottom: none;
+  border-top: 1px solid var(--color-border);
+  font-weight: var(--font-weight-semibold);
+}
+
+.allocationSplitterTotalLabel {
+  font-size: var(--font-size-sm);
+  color: var(--color-ink);
+}
+
+.allocationSplitterTotalValue {
+  text-align: right;
+  font-family: var(--font-mono);
+  font-size: var(--font-size-sm);
+  color: var(--color-ink);
+}
+
+.allocationSplitterTotalNote {
+  margin-right: 12px;
+  font-family: var(--font-base);
+  font-weight: 500;
+  color: var(--color-danger);
+}
+
+.allocationSplitterTotalRow.isInvalid .allocationSplitterTotalValue {
+  color: var(--color-danger);
+}
+
+.allocationSplitterSrOnly {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip: rect(0, 0, 0, 0);
+  white-space: nowrap;
+  border: 0;
+}
+
+@media (max-width: 414px) {
+  .allocationSplitterControlsRow {
+    flex-direction: column;
+    align-items: stretch;
+    gap: 16px;
+  }
+
+  .allocationSplitterAmountField,
+  .allocationSplitterModeField {
+    flex-direction: row;
+    align-items: baseline;
+    gap: 12px;
+    min-width: 0;
+  }
+
+  .allocationSplitterModeSelect {
+    flex: 1 1 auto;
+    min-width: 0;
+    width: 100%;
+  }
+
+  .allocationSplitterAmountField .allocationSplitterValueLabel,
+  .allocationSplitterModeField .allocationSplitterModeLabel {
+    flex: 0 0 auto;
+    width: 60px;
+  }
+
+  .allocationSplitterTable {
+    display: block;
+  }
+
+  .allocationSplitterTable tbody {
+    display: block;
+  }
+
+  .allocationSplitterRow {
+    display: grid;
+    width: 100%;
+    box-sizing: border-box;
+    grid-template-columns: auto 1fr auto;
+    grid-template-areas:
+      'label      label  label'
+      'percentage amount lock';
+    column-gap: 12px;
+    row-gap: 10px;
+    align-items: center;
+    padding: 16px 12px;
+    border-bottom: 1px solid var(--color-border);
+  }
+
+  .allocationSplitterRow:last-child {
+    border-bottom: none;
+  }
+
+  .allocationSplitterRow td {
+    display: block;
+    padding: 0;
+    border-bottom: none;
+  }
+
+  .allocationSplitterLabelCell {
+    grid-area: label;
+    min-width: 0;
+    padding-left: 0;
+  }
+
+  .allocationSplitterPercentageCell {
+    grid-area: percentage;
+    justify-self: start;
+  }
+
+  .allocationSplitterAmountCell {
+    grid-area: amount;
+    text-align: left;
+  }
+
+  .allocationSplitterLockCell {
+    grid-area: lock;
+    justify-self: end;
+  }
+
+  .allocationSplitterTable tfoot {
+    display: block;
+  }
+
+  .allocationSplitterTotalRow {
+    display: flex;
+    justify-content: space-between;
+    align-items: baseline;
+    border-top: 1px solid var(--color-border);
+  }
+
+  .allocationSplitterTotalRow td {
+    display: block;
+    padding-top: 16px;
+    padding-bottom: 16px;
+    border-top: none;
+  }
+
+  .allocationSplitterName {
+    font-size: 17px;
+  }
+}
+
+@media (max-width: 400px) {
+  .allocationSplitterRow {
+    padding-top: 12px;
+    padding-bottom: 12px;
+  }
+
+  .allocationSplitterTotalRow td {
+    padding-top: 12px;
+    padding-bottom: 12px;
+  }
+
+  .allocationSplitterName {
+    font-size: 16px;
+  }
+
+  .allocationSplitterDescription {
+    font-size: 13px;
+  }
+}
