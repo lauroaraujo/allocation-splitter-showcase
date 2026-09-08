@@ -168,6 +168,15 @@ export const AllocationSplitter = <K extends string = 'proportional' | 'freeform
               }
 
               const inputId = `${uid}-${slugify(name)}`;
+              // Plain-text table cells (like the dollar amount) aren't
+              // focusable, so a screen reader user tabbing between the
+              // percentage input and lock button would otherwise never
+              // land on it — describedby attaches it to the input's own
+              // focus stop instead of requiring a full linear read-through.
+              const amountId = `${inputId}-amount`;
+              const describedBy = [amountId, showTotal ? totalValueId : null]
+                .filter(Boolean)
+                .join(' ');
 
               return (
                 <tr className={styles.allocationSplitterRow} key={name}>
@@ -193,11 +202,12 @@ export const AllocationSplitter = <K extends string = 'proportional' | 'freeform
                       onCommit={(nextValue) => applyPercentage(name, nextValue)}
                       disabled={row.isLocked}
                       aria-label={`Percentage of ${name}`}
-                      aria-describedby={showTotal ? totalValueId : undefined}
+                      aria-describedby={describedBy}
                     />
                   </td>
-                  <td className={styles.allocationSplitterAmountCell}>
-                    ${formatCurrency(amountByName.get(name) ?? 0)}
+                  <td className={styles.allocationSplitterAmountCell} id={amountId}>
+                    <span className={styles.allocationSplitterSrOnly}>Amount: </span>$
+                    {formatCurrency(amountByName.get(name) ?? 0)}
                   </td>
                   <td className={styles.allocationSplitterLockCell}>
                     <LockToggle
@@ -226,7 +236,18 @@ export const AllocationSplitter = <K extends string = 'proportional' | 'freeform
                       {total < 100 ? 'left to allocate' : 'over'}
                     </span>
                   )}
-                  <span id={totalValueId}>{total}%</span>
+                  {/* TODO: look for a better fix; This was suggested by Claude code; */}
+                  <span id={totalValueId}>
+                    {/* Percentage inputs point their aria-describedby at this
+                        span so screen reader users hear the running total
+                        while editing any row. Without this prefix, the
+                        description reads as a bare number right after the
+                        field's own value (e.g. "5" then "100%"), which is
+                        easily misheard as the field's value itself instead
+                        of the total. */}
+                    <span className={styles.allocationSplitterSrOnly}>Total allocated: </span>
+                    {total}%
+                  </span>
                 </td>
               </tr>
             </tfoot>
