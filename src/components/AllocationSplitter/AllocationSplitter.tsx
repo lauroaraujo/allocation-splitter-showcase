@@ -52,10 +52,6 @@ export const AllocationSplitter = <K extends string = 'proportional' | 'freeform
   showStrategySelector = true,
   showBar = true,
 }: AllocationSplitterProps<K>) => {
-  // Memoized so its reference only changes when `categories` itself does —
-  // otherwise the announcement effect below (which depends on `rows`)
-  // would re-run on every render, since `.map()` would hand it a new array
-  // each time regardless of whether anything actually changed.
   const rows: AllocationRow[] = useMemo(
     () =>
       categories.map(({ name, percentage, isLocked }) => ({
