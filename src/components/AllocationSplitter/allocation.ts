@@ -15,9 +15,11 @@ export function sumRowPercentages(rows: AllocationRow[]) {
   return rows.map(r => r.percentage).reduce((sum, p) => sum + toBasisPoints(p), 0);
 }
 
-// Distributes `total` as integers across `weights` so they sum exactly to `total`.
-// Floors every share, then hands the leftover units to the largest fractional
-// parts, so e.g. three equal weights splitting 100 don't come out to 99.
+/**
+ * Distributes `total` as integers across `weights` so they sum exactly to `total`.
+ * Floors every share, then hands the leftover units to the largest fractional
+ * parts, so e.g. three equal weights splitting 100 don't come out to 99.
+ */
 function largestRemainder(weights: number[], total: number): number[] {
   const sum = weights.reduce((a, b) => a + b, 0);
   if (sum <= 0) {
@@ -45,21 +47,35 @@ export function getMaxAvailable(rows: AllocationRow[], name: string): number {
   return fromBasisPoints(100 * PERCENT_SCALE - lockedBasisPoints);
 }
 
-// Proportional model: set `name` to `nextValue`, then rebalance the unlocked
-// rows around it so the total stays at 100, preserving their relative shares.
-export function redistributeProportionally(
+/**
+ * Clamps a requested percentage to what `name`'s locked siblings leave
+ * available, rounded to basis points. Every allocation strategy (built-in
+ * or a caller-supplied `allocationStrategy`) receives its `nextValue`
+ * already run through this, so none of them have to re-derive
+ * `getMaxAvailable` themselves just to stay within that bound.
+ */
+export function clampPercentage(rows: AllocationRow[], name: string, nextValue: number): number {
+  const max = getMaxAvailable(rows, name);
+  return Math.max(0, Math.min(max, fromBasisPoints(toBasisPoints(nextValue))));
+}
+
+/**
+ *
+ * Proportional model: set `name` to `nextValue`, then rebalance the unlocked
+ * rows around it so the total stays at 100, preserving their relative shares.
+ * `nextValue` is assumed already clamped via `clampPercentage`.
+ */
+export function proportionalAllocation(
   rows: AllocationRow[],
   name: string,
   nextValue: number
 ): AllocationRow[] {
   const max = getMaxAvailable(rows, name);
-  const next = Math.max(0, Math.min(max, fromBasisPoints(toBasisPoints(nextValue))));
-
   const pool = rows.filter((row) => row.name !== name && !row.isLocked);
-  const remainingBasisPoints = toBasisPoints(max) - toBasisPoints(next);
+  const remainingBasisPoints = toBasisPoints(max) - toBasisPoints(nextValue);
 
   if (pool.length === 0) {
-    return rows.map((row) => (row.name === name ? { ...row, percentage: next } : row));
+    return rows.map((row) => (row.name === name ? { ...row, percentage: nextValue } : row));
   }
 
   const poolSum = sumRowPercentages(pool);
@@ -69,7 +85,7 @@ export function redistributeProportionally(
 
   return rows.map((row) => {
     if (row.name === name) {
-      return { ...row, percentage: next };
+      return { ...row, percentage: nextValue };
     };
 
     const share = shareByName.get(row.name);
@@ -77,16 +93,44 @@ export function redistributeProportionally(
   });
 }
 
-// Free-form model: only the edited row changes, clamped to what locked rows
-// leave available. The total is allowed to drift away from 100.
-export function applyFreeform(rows: AllocationRow[], name: string, nextValue: number): AllocationRow[] {
-  const max = getMaxAvailable(rows, name);
-  const next = Math.max(0, Math.min(max, fromBasisPoints(toBasisPoints(nextValue))));
-  return rows.map((row) => (row.name === name ? { ...row, percentage: next } : row));
+/**
+ * Free-form model: only the edited row changes, clamped to what locked rows
+ * leave available. The total is allowed to drift away from 100. `nextValue`
+ * is assumed already clamped via `clampPercentage`.
+ */
+export function freeformAllocation(rows: AllocationRow[], name: string, nextValue: number): AllocationRow[] {
+  return rows.map((row) => (row.name === name ? { ...row, percentage: nextValue } : row));
 }
 
-// Dollar amounts are also split with the largest-remainder method, in cents,
-// so they sum exactly to `value` instead of drifting from independent rounding.
+/**
+ * Receives `nextValue` already clamped to what `name`'s locked siblings
+ * leave available (see `clampPercentage`), so it doesn't need to re-derive
+ * that bound itself — only decide how the rest of `rows` reacts.
+ */
+export type AllocationStrategy = (
+  rows: AllocationRow[],
+  name: string,
+  nextValue: number
+) => AllocationRow[];
+
+// Keyed by an arbitrary string id (not a fixed enum), so a consumer can mix
+// the built-ins with their own named strategies. Each entry carries its own
+// display label since the key itself (e.g. a consumer's own
+// "weightedSplit") isn't necessarily fit to show in the built-in selector.
+export type AllocationStrategyMap<K extends string = 'proportional' | 'freeform'> = Record<
+  K,
+  { label: string; strategy: AllocationStrategy }
+>;
+
+export const defaultAllocationStrategies: AllocationStrategyMap<'proportional' | 'freeform'> = {
+  proportional: { label: 'Proportional', strategy: proportionalAllocation },
+  freeform: { label: 'Freeform', strategy: freeformAllocation },
+};
+
+/**
+ * Dollar amounts are also split with the largest-remainder method, in cents,
+ * so they sum exactly to `value` instead of drifting from independent rounding.
+ */
 export function getAmounts(rows: AllocationRow[], value: number): number[] {
   const cents = Math.round(value * 100);
   const totalBasisPoints = sumRowPercentages(rows);

@@ -10,47 +10,48 @@ import '../../common/tokens.css';
 import styles from './AllocationSplitter.module.css';
 import {
   type AllocationRow,
-  redistributeProportionally,
-  applyFreeform,
+  clampPercentage,
   getAmounts,
   type AllocationCategory,
   sumRowPercentages,
+  type AllocationStrategyMap,
+  defaultAllocationStrategies,
 } from './allocation';
 import { slugify } from '../../common/string';
 
-export type AllocationSplitterMode = 'proportional' | 'freeform';
-
 export type AllocationSplitterValueInputMode = 'readOnly' | 'readWrite' | 'hidden';
 
-export type AllocationSplitterProps = {
+export type AllocationSplitterProps<K extends string = 'proportional' | 'freeform'> = {
   value: number;
   onValueChange: (value: number) => void;
   categories: AllocationCategory[];
   onCategoriesChange: (categories: AllocationCategory[]) => void;
-  mode?: AllocationSplitterMode;
-  onModeChange: (mode: AllocationSplitterMode) => void;
+  // Defaults to `defaultAllocationStrategies` (proportional + freeform) when
+  // omitted. Passing a custom map fully replaces the built-ins — spread
+  // `defaultAllocationStrategies` into your own map to keep them alongside
+  // a custom strategy.
+  strategies?: AllocationStrategyMap<K>;
+  strategy?: K;
+  onStrategyChange: (strategy: K) => void;
   showTotal?: boolean;
   valueInputMode?: AllocationSplitterValueInputMode;
-  showModeSelector?: boolean;
+  showStrategySelector?: boolean;
   showBar?: boolean;
 };
 
-export const AllocationSplitter = ({
+export const AllocationSplitter = <K extends string = 'proportional' | 'freeform',>({
   value,
   onValueChange,
   categories,
   onCategoriesChange,
-  mode = 'proportional',
-  onModeChange,
+  strategies,
+  strategy,
+  onStrategyChange,
   showTotal = true,
   valueInputMode = 'readWrite',
-  showModeSelector = true,
+  showStrategySelector = true,
   showBar = true,
-}: AllocationSplitterProps) => {
-  // Derived fresh from `categories` every render rather than mirrored into
-  // state, since `categories` (and `value`/`mode`) are now the live source
-  // of truth — the parent owns them and this component only requests
-  // changes via the on*Change callbacks.
+}: AllocationSplitterProps<K>) => {
   const rows: AllocationRow[] = categories.map(({ name, percentage, isLocked }) => ({
     name,
     percentage,
@@ -61,11 +62,6 @@ export const AllocationSplitter = ({
   const isFirstRenderRef = useRef(true);
   const announceTimeoutRef = useRef<ReturnType<typeof setTimeout>>(undefined);
 
-  // Debounced so rapid edits (typing, arrow-key repeats) announce once the
-  // user settles rather than firing on every intermediate keystroke. Keyed
-  // off the `categories` prop rather than the locally-derived `rows`, since
-  // a controlled prop's reference is expected to change only when its
-  // contents actually do (unlike `rows`, which is a new array every render).
   useEffect(() => {
     if (isFirstRenderRef.current) {
       isFirstRenderRef.current = false;
@@ -89,9 +85,6 @@ export const AllocationSplitter = ({
   const total = fromBasisPoints(totalBasisPoints);
   const isTotalValid = totalBasisPoints === 100 * PERCENT_SCALE;
 
-  // Rows and the public categories prop stay index-aligned (rows are derived
-  // directly from categories above), so updated rows can be zipped back onto
-  // the original categories by position to restore description/color.
   const toPublicCategories = (nextRows: AllocationRow[]): AllocationCategory[] =>
     categories.map((category, index) => ({
       ...category,
@@ -99,12 +92,14 @@ export const AllocationSplitter = ({
       isLocked: nextRows[index].isLocked,
     }));
 
+  const strategyMap = (strategies ?? defaultAllocationStrategies) as AllocationStrategyMap<K>;
+  const strategyKeys = Object.keys(strategyMap) as K[];
+  const activeStrategyKey = strategy ?? strategyKeys[0];
+
   const applyPercentage = (name: string, nextValue: number) => {
-    const nextRows =
-      mode === 'freeform'
-        ? applyFreeform(rows, name, nextValue)
-        : redistributeProportionally(rows, name, nextValue);
-    onCategoriesChange(toPublicCategories(nextRows));
+    const clamped = clampPercentage(rows, name, nextValue);
+    const activeStrategy = strategyMap[activeStrategyKey].strategy;
+    onCategoriesChange(toPublicCategories(activeStrategy(rows, name, clamped)));
   };
 
   const toggleLock = (name: string) => {
@@ -113,7 +108,7 @@ export const AllocationSplitter = ({
   };
 
   const valueInputId = `${uid}-value`;
-  const modeSelectId = `${uid}-mode`;
+  const strategySelectId = `${uid}-strategy`;
   const barSegments = categories.map(({ name, color }) => ({
     name,
     color,
@@ -122,7 +117,7 @@ export const AllocationSplitter = ({
 
   return (
     <div className={styles.allocationSplitterRoot}>
-      {(valueInputMode !== 'hidden' || showModeSelector) && (
+      {(valueInputMode !== 'hidden' || showStrategySelector) && (
         <div className={styles.allocationSplitterControlsRow}>
           {valueInputMode !== 'hidden' && (
             <div className={styles.allocationSplitterAmountField}>
@@ -137,19 +132,22 @@ export const AllocationSplitter = ({
               />
             </div>
           )}
-          {showModeSelector && (
+          {showStrategySelector && (
             <div className={styles.allocationSplitterModeField}>
-              <label htmlFor={modeSelectId} className={styles.allocationSplitterModeLabel}>
-                Mode
+              <label htmlFor={strategySelectId} className={styles.allocationSplitterModeLabel}>
+                Strategy
               </label>
               <select
-                id={modeSelectId}
+                id={strategySelectId}
                 className={styles.allocationSplitterModeSelect}
-                value={mode}
-                onChange={(event) => onModeChange(event.target.value as AllocationSplitterMode)}
+                value={activeStrategyKey}
+                onChange={(event) => onStrategyChange(event.target.value as K)}
               >
-                <option value="proportional">Proportional</option>
-                <option value="freeform">Freeform</option>
+                {strategyKeys.map((key) => (
+                  <option key={key} value={key}>
+                    {strategyMap[key].label}
+                  </option>
+                ))}
               </select>
             </div>
           )}
@@ -247,8 +245,6 @@ export const AllocationSplitter = ({
   );
 };
 
-// Phrased as the settled result, not the keystroke, so a screen reader user
-// hears a coherent summary instead of a stream of in-progress diffs.
 function buildAnnouncement(rows: AllocationRow[]): string {
   const totalBasisPoints = sumRowPercentages(rows)
   const total = fromBasisPoints(totalBasisPoints);

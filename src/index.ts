@@ -1,7 +1,17 @@
 export { AllocationSplitter } from './components/AllocationSplitter/AllocationSplitter';
 export type {
   AllocationSplitterProps,
-  AllocationSplitterMode,
   AllocationSplitterValueInputMode,
 } from './components/AllocationSplitter/AllocationSplitter';
-export type { AllocationCategory as AllocationSplitterCategory } from './components/AllocationSplitter/allocation';
+export type {
+  AllocationCategory as AllocationSplitterCategory,
+  AllocationRow as AllocationSplitterRow,
+  AllocationStrategy,
+  AllocationStrategyMap,
+} from './components/AllocationSplitter/allocation';
+export {
+  getMaxAvailable,
+  proportionalAllocation,
+  freeformAllocation,
+  defaultAllocationStrategies,
+} from './components/AllocationSplitter/allocation';
