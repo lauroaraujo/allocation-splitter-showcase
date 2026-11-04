@@ -1,9 +1,11 @@
 import { useLayoutEffect, useRef, useState, type ChangeEvent } from 'react';
-import { sanitizeDecimalInput } from '../../common/numberInput';
 import { formatCurrency } from '../../common/currency';
-import { cursorOffsetForDigitCount } from '../../common/numberInput';
-import { isPastDecimalPoint } from '../../common/numberInput';
-import { countDigits } from '../../common/numberInput';
+import {
+  countDigits,
+  cursorOffsetForDigitCount,
+  isPastDecimalPoint,
+  sanitizeDecimalInput,
+} from '../../common/numberInput';
 import '../../common/tokens.css';
 import styles from './CurrencyInput.module.css';
 

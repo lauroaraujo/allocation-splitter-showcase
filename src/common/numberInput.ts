@@ -7,8 +7,8 @@ export function sanitizeDecimalInput(rawValue: string, maxDecimals = 2): string 
   const dotIndex = digitsAndDot.indexOf('.');
 
   if (dotIndex === -1) {
-    return digitsAndDot
-  };
+    return digitsAndDot;
+  }
 
   const intPart = digitsAndDot.slice(0, dotIndex);
   const decimalPart = digitsAndDot.slice(dotIndex + 1).replace(/\./g, '').slice(0, maxDecimals);
@@ -37,8 +37,8 @@ export function cursorOffsetForDigitCount(
   pastDecimalPoint = false
 ): number {
   if (digitCount <= 0 && !pastDecimalPoint) {
-    return 0
-  };
+    return 0;
+  }
 
   let seen = 0;
   let passedDot = false;

@@ -7,13 +7,13 @@
   border-radius: 50%;
   border: 1.5px solid #c9c9c9;
   background-color: transparent;
-  color: var(--color-muted);
+  color: var(--as-color-muted);
   padding: 0;
   cursor: pointer;
 }
 
 .lockToggle[data-locked] {
-  background-color: var(--color-ink);
-  border-color: var(--color-ink);
+  background-color: var(--as-color-ink);
+  border-color: var(--as-color-ink);
   color: #fff;
 }
