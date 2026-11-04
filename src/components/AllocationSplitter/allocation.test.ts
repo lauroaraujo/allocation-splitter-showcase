@@ -57,6 +57,11 @@ describe('largestRemainder', () => {
     expect(largestRemainder([0, 0, 0], 100)).toEqual([0, 0, 0]);
   });
 
+  it('returns all zeros for a non-positive total', () => {
+    expect(largestRemainder([1, 2, 3], 0)).toEqual([0, 0, 0]);
+    expect(largestRemainder([1, 2, 3], -2000)).toEqual([0, 0, 0]);
+  });
+
   it('always sums exactly to total, each share within 1 of its exact value', () => {
     fc.assert(
       fc.property(
@@ -95,6 +100,10 @@ describe('getMaxAvailable / clampPercentage', () => {
   it('rounds to basis points', () => {
     expect(clampPercentage(rows, 'c', 12.3456)).toBe(12.35);
     expect(clampPercentage(rows, 'c', 12.344)).toBe(12.34);
+  });
+
+  it('never returns a negative max when locked siblings exceed 100', () => {
+    expect(getMaxAvailable([row('a', 60, true), row('b', 60, true), row('c', 0)], 'c')).toBe(0);
   });
 
   it('allows only 0 when locked siblings add up to 100 or more', () => {
@@ -165,9 +174,8 @@ describe('proportionalAllocation', () => {
     );
   });
 
-  // Known bug: locked rows over 100% (reachable via freeform) push the pool negative.
-  // Flip to `it` once https://github.com/lauroaraujo/allocation-splitter-showcase/issues/4 is fixed.
-  it.fails('never produces negative values when locked rows exceed 100% (#4)', () => {
+  // Locked rows over 100% are reachable via freeform; the pool must not go negative.
+  it('never produces negative values when locked rows exceed 100% (#4)', () => {
     const rows = [row('a', 60, true), row('b', 60, true), row('c', 0), row('d', 0)];
     const nextValue = clampPercentage(rows, 'c', 10);
     const result = proportionalAllocation(rows, 'c', nextValue);

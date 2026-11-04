@@ -19,10 +19,11 @@ export function sumRowPercentages(rows: AllocationRow[]) {
  * Distributes `total` as integers across `weights` so they sum exactly to `total`.
  * Floors every share, then hands the leftover units to the largest fractional
  * parts, so e.g. three equal weights splitting 100 don't come out to 99.
+ * A non-positive `total` yields all zeros rather than negative shares.
  */
 export function largestRemainder(weights: number[], total: number): number[] {
   const sum = weights.reduce((a, b) => a + b, 0);
-  if (sum <= 0) {
+  if (sum <= 0 || total <= 0) {
     return weights.map(() => 0);
   }
 
@@ -44,7 +45,7 @@ export function largestRemainder(weights: number[], total: number): number[] {
 
 export function getMaxAvailable(rows: AllocationRow[], name: string): number {
   const lockedBasisPoints = sumRowPercentages(rows.filter(row => row.name !== name && row.isLocked));
-  return fromBasisPoints(100 * PERCENT_SCALE - lockedBasisPoints);
+  return fromBasisPoints(Math.max(0, 100 * PERCENT_SCALE - lockedBasisPoints));
 }
 
 /**
@@ -72,7 +73,7 @@ export function proportionalAllocation(
 ): AllocationRow[] {
   const max = getMaxAvailable(rows, name);
   const pool = rows.filter((row) => row.name !== name && !row.isLocked);
-  const remainingBasisPoints = toBasisPoints(max) - toBasisPoints(nextValue);
+  const remainingBasisPoints = Math.max(0, toBasisPoints(max) - toBasisPoints(nextValue));
 
   if (pool.length === 0) {
     return rows.map((row) => (row.name === name ? { ...row, percentage: nextValue } : row));
