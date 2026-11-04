@@ -1,16 +1,16 @@
 :root {
-  --font-base: -apple-system, BlinkMacSystemFont, 'Segoe UI', Helvetica, Arial, sans-serif;
-  --font-mono: 'SF Mono', 'Menlo', 'Consolas', monospace;
-  --font-size-sm: 14px;
-  --font-weight-semibold: 600;
-  --font-weight-bold: 700;
+  --as-font-base: -apple-system, BlinkMacSystemFont, 'Segoe UI', Helvetica, Arial, sans-serif;
+  --as-font-mono: 'SF Mono', 'Menlo', 'Consolas', monospace;
+  --as-font-size-sm: 14px;
+  --as-font-weight-semibold: 600;
+  --as-font-weight-bold: 700;
 
-  --color-ink: #1a1a1a;
-  --color-muted: #666;
-  --color-disabled: #999;
-  --color-surface: #efefef;
-  --color-danger: #a63e36;
-  --color-border: #e5e5e5;
+  --as-color-ink: #1a1a1a;
+  --as-color-muted: #666;
+  --as-color-disabled: #999;
+  --as-color-surface: #efefef;
+  --as-color-danger: #a63e36;
+  --as-color-border: #e5e5e5;
 
-  --radius-md: 8px;
+  --as-radius-md: 8px;
 }

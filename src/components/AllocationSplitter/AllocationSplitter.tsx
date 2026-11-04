@@ -239,7 +239,7 @@ export const AllocationSplitter = <K extends string = 'proportional' | 'freeform
                       {total < 100 ? 'left to allocate' : 'over'}
                     </span>
                   )}
-                  {/* TODO: look for a better fix; This was suggested by Claude code; */}
+                  {/* TODO(#5): revisit once the table has proper header cells. */}
                   <span id={totalValueId}>
                     {/* Percentage inputs point their aria-describedby at this
                         span so screen reader users hear the running total

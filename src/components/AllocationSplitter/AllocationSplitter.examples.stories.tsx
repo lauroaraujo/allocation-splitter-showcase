@@ -49,7 +49,7 @@ function CategoryManagementPage() {
   };
 
   return (
-    <div style={{ minHeight: '100vh', backgroundColor: '#f5f5f5', fontFamily: 'var(--font-base)' }}>
+    <div style={{ minHeight: '100vh', backgroundColor: '#f5f5f5', fontFamily: 'var(--as-font-base)' }}>
       {/* Inline styles can't express a media query, and this is a
           demo-only page (not a distributable component), so a scoped
           <style> tag is the pragmatic choice over introducing a CSS Module
@@ -107,7 +107,7 @@ function CategoryManagementPage() {
       <header
         className="example-page-header"
         style={{
-          backgroundColor: 'var(--color-ink)',
+          backgroundColor: 'var(--as-color-ink)',
           color: '#fff',
           fontSize: 18,
           fontWeight: 600,
@@ -120,7 +120,7 @@ function CategoryManagementPage() {
           className="example-page-card"
           style={{
             backgroundColor: '#fff',
-            borderRadius: 'var(--radius-md)',
+            borderRadius: 'var(--as-radius-md)',
             boxShadow: '0 1px 3px rgba(0, 0, 0, 0.1)',
           }}
         >
@@ -153,7 +153,7 @@ function CategoryManagementPage() {
                 placeholder="e.g. Savings"
                 style={{
                   border: '1px solid #c9c9c9',
-                  borderRadius: 'var(--radius-md)',
+                  borderRadius: 'var(--as-radius-md)',
                   padding: '9px 12px',
                   fontSize: 14,
                   fontFamily: 'inherit',
@@ -165,8 +165,8 @@ function CategoryManagementPage() {
                 disabled={!trimmedName || isDuplicateName}
                 style={{
                   border: 'none',
-                  borderRadius: 'var(--radius-md)',
-                  backgroundColor: 'var(--color-ink)',
+                  borderRadius: 'var(--as-radius-md)',
+                  backgroundColor: 'var(--as-color-ink)',
                   color: '#fff',
                   padding: '10px 16px',
                   fontSize: 14,
@@ -195,11 +195,11 @@ function CategoryManagementPage() {
                   display: 'inline-flex',
                   alignItems: 'center',
                   gap: 6,
-                  backgroundColor: 'var(--color-surface)',
+                  backgroundColor: 'var(--as-color-surface)',
                   borderRadius: 999,
                   padding: '4px 6px 4px 12px',
                   fontSize: 13,
-                  color: 'var(--color-ink)',
+                  color: 'var(--as-color-ink)',
                 }}
               >
                 {category.name}
@@ -216,7 +216,7 @@ function CategoryManagementPage() {
                     border: 'none',
                     borderRadius: '50%',
                     backgroundColor: 'transparent',
-                    color: 'var(--color-muted)',
+                    color: 'var(--as-color-muted)',
                     fontSize: 14,
                     lineHeight: 1,
                     cursor: 'pointer',

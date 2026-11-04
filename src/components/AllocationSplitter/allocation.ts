@@ -23,8 +23,8 @@ export function sumRowPercentages(rows: AllocationRow[]) {
 function largestRemainder(weights: number[], total: number): number[] {
   const sum = weights.reduce((a, b) => a + b, 0);
   if (sum <= 0) {
-    return weights.map(() => 0)
-  };
+    return weights.map(() => 0);
+  }
 
   const exact = weights.map((weight) => (weight / sum) * total);
   const floored = exact.map(Math.floor);
@@ -86,7 +86,7 @@ export function proportionalAllocation(
   return rows.map((row) => {
     if (row.name === name) {
       return { ...row, percentage: nextValue };
-    };
+    }
 
     const share = shareByName.get(row.name);
     return share === undefined ? row : { ...row, percentage: share };

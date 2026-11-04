@@ -5,14 +5,14 @@
   align-items: baseline;
   gap: 2px;
   padding: 12px 20px;
-  border-radius: var(--radius-md);
-  background-color: var(--color-surface);
-  font-family: var(--font-base);
+  border-radius: var(--as-radius-md);
+  background-color: var(--as-color-surface);
+  font-family: var(--as-font-base);
 }
 
 .currencyInputSign {
-  font-size: var(--font-size-sm);
-  color: var(--color-muted);
+  font-size: var(--as-font-size-sm);
+  color: var(--as-color-muted);
 }
 
 .currencyInputField {
@@ -23,8 +23,8 @@
   padding: 0;
   font-family: inherit;
   font-size: 20px;
-  font-weight: var(--font-weight-bold);
-  color: var(--color-ink);
+  font-weight: var(--as-font-weight-bold);
+  color: var(--as-color-ink);
   font-variant-numeric: tabular-nums;
   text-align: right;
 }
@@ -34,9 +34,9 @@
 }
 
 .currencyInputField:disabled {
-  color: var(--color-disabled);
+  color: var(--as-color-disabled);
   opacity: 1;
-  -webkit-text-fill-color: var(--color-disabled);
+  -webkit-text-fill-color: var(--as-color-disabled);
   cursor: default;
 }
 
