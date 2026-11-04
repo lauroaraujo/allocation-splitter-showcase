@@ -20,7 +20,7 @@ export function sumRowPercentages(rows: AllocationRow[]) {
  * Floors every share, then hands the leftover units to the largest fractional
  * parts, so e.g. three equal weights splitting 100 don't come out to 99.
  */
-function largestRemainder(weights: number[], total: number): number[] {
+export function largestRemainder(weights: number[], total: number): number[] {
   const sum = weights.reduce((a, b) => a + b, 0);
   if (sum <= 0) {
     return weights.map(() => 0);
